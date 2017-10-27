@@ -67,6 +67,7 @@ export default {
         )
         .then(response => {
           this.movies = this.movies.concat(response.data.results)
+          this.filteredMovies = this.filteredMovies.concat(response.data.results)
           this.currentPageLoaded++
         })
     },
