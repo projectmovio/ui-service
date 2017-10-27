@@ -10,8 +10,6 @@
                     </transition-group>
                 </v-layout>
             </v-container>
-
-            <v-btn @click.native="loadMore" color="primary">Load More</v-btn>
         </v-flex>
     </v-layout>
 </template>
