@@ -21,6 +21,7 @@
 
 <script>
 import Vue from 'vue'
+import _ from 'lodash'
 
 export default {
   data() {
@@ -28,7 +29,8 @@ export default {
       movies: [],
       currentPageLoaded: 1,
       scrollOffsetBottom: 1000,
-      searchString: ''
+      searchString: '',
+      filteredMovies: []
     }
   },
   created() {
@@ -43,14 +45,13 @@ export default {
       )
       .then(response => {
         this.movies = response.data.results
+        this.filteredMovies = this.movies
       })
   },
-  computed: {
-    filteredMovies() {
-      return this.movies.filter(movie =>
-        movie.title.toLowerCase().includes(this.searchString)
-      )
-    }
+  watch: {
+    searchString: function () {
+       this.expensiveOperation()
+     }
   },
   methods: {
     loadMore() {
@@ -77,7 +78,13 @@ export default {
       if (pos == max) {
         this.loadMore()
       }
-    }
+    },
+    expensiveOperation: _.debounce(function () {
+      setTimeout(function () {
+        this.filteredMovies = this.movies.filter(movie =>
+        movie.title.toLowerCase().includes(this.searchString))
+      }.bind(this), 200)
+    }, 200)
   }
 }
 </script>
