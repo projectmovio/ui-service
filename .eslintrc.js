@@ -1,21 +1,10 @@
-// http://eslint.org/docs/user-guide/configuring
-
 module.exports = {
-  root: true,
-  parser: 'babel-eslint',
-  parserOptions: {
-    sourceType: 'module'
-  },
-  env: {
-    browser: true,
-  },
-  // required to lint *.vue files
-  plugins: [
-    'html'
+  extends: [
+    'eslint:recommended',
+    'plugin:vue/recommended' // or 'plugin:vue/base'
   ],
-  // add your custom rules here
-  'rules': {
-    // allow debugger during development
-    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
+  rules: {
+    // override/add rules' settings here
+    'vue/valid-v-if': 'error'
   }
 }

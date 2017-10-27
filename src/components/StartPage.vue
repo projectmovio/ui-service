@@ -75,7 +75,7 @@ export default {
           this.currentPageLoaded++
         })
     },
-    onScroll(e) {
+    onScroll() {
       let pos =
         (document.documentElement.scrollTop || document.body.scrollTop) +
         document.documentElement.offsetHeight
