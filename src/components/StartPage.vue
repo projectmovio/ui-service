@@ -46,7 +46,6 @@ export default {
         }
       )
       .then(response => {
-        console.log(response.data.results)
         this.movies = response.data.results
         this.filteredMovies = response.data.results
       })
