@@ -8,9 +8,11 @@
           </v-flex>
         </v-layout>
         <v-layout row wrap>
-          <transition-group name="list" tag="p">
-            <span v-for="item in filteredMovies" v-bind:key="item.id" class="list-item">
-              <img :src="`http://image.tmdb.org/t/p/w600/${item.poster_path}`" width="270px" height="400px" />
+          <transition-group name="movie" tag="p">
+            <span v-for="movie in filteredMovies" v-bind:key="movie.id" class="list-movie">
+              <a :href="`https://www.themoviedb.org/movie/${movie.id}`">
+                <img :src="`http://image.tmdb.org/t/p/w600/${movie.poster_path}`" width="270px" height="400px" />
+              </a>
             </span>
           </transition-group>
         </v-layout>
@@ -44,14 +46,15 @@ export default {
         }
       )
       .then(response => {
+        console.log(response.data.results)
         this.movies = response.data.results
-        this.filteredMovies = this.movies
+        this.filteredMovies = response.data.results
       })
   },
   watch: {
-    searchString: function () {
-       this.expensiveOperation()
-     }
+    searchString: function() {
+      this.expensiveOperation()
+    }
   },
   methods: {
     loadMore() {
@@ -67,7 +70,9 @@ export default {
         )
         .then(response => {
           this.movies = this.movies.concat(response.data.results)
-          this.filteredMovies = this.filteredMovies.concat(response.data.results)
+          this.filteredMovies = this.filteredMovies.concat(
+            response.data.results
+          )
           this.currentPageLoaded++
         })
     },
@@ -80,11 +85,15 @@ export default {
         this.loadMore()
       }
     },
-    expensiveOperation: _.debounce(function () {
-      setTimeout(function () {
-        this.filteredMovies = this.movies.filter(movie =>
-        movie.title.toLowerCase().includes(this.searchString))
-      }.bind(this), 200)
+    expensiveOperation: _.debounce(function() {
+      setTimeout(
+        function() {
+          this.filteredMovies = this.movies.filter(movie =>
+            movie.title.toLowerCase().includes(this.searchString)
+          )
+        }.bind(this),
+        200
+      )
     }, 200)
   }
 }
@@ -93,21 +102,18 @@ export default {
 <style scoped>
 img {
   object-fit: cover;
+  margin: 0 4px;
 }
 
-.list-item {
-  margin: 2px;
-}
-
-.list-enter-active {
+.movie-enter-active {
   transition: all 1s;
 }
 
-.list-leave-active {
+.movie-leave-active {
   transition: all 0.2s;
 }
-.list-enter,
-.list-leave-to {
+.movie-enter,
+.movie-leave-to {
   opacity: 0;
   transform: translateY(30px);
 }
