@@ -1,17 +1,22 @@
 <template>
-    <v-layout v-scroll="onScroll">
-        <v-flex xs12 sm8 offset-sm2>
-            <v-container fluid v-bind="{ [`grid-list-xs`]: true }">
-                <v-layout row wrap>
-                    <transition-group name="list" tag="p">
-                        <span v-for="item in movies" v-bind:key="item.id" class="list-item">
-                            <img :src="`http://image.tmdb.org/t/p/w600/${item.poster_path}`" width="270px" height="400px" />
-                        </span>
-                    </transition-group>
-                </v-layout>
-            </v-container>
-        </v-flex>
-    </v-layout>
+  <v-layout v-scroll="onScroll" mt-5>
+    <v-flex xs12 sm8 offset-sm2>
+      <v-container fluid v-bind="{ [`grid-list-xs`]: true }">
+        <v-layout row>
+          <v-flex xs8 offset-xs2>
+            <v-text-field name="input-2-3" label="Search" class="input-group--focused" v-model="searchString" single-line></v-text-field>
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap>
+          <transition-group name="list" tag="p">
+            <span v-for="item in filteredMovies" v-bind:key="item.id" class="list-item">
+              <img :src="`http://image.tmdb.org/t/p/w600/${item.poster_path}`" width="270px" height="400px" />
+            </span>
+          </transition-group>
+        </v-layout>
+      </v-container>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -22,7 +27,8 @@ export default {
     return {
       movies: [],
       currentPageLoaded: 1,
-      scrollOffsetBottom: 1000
+      scrollOffsetBottom: 1000,
+      searchString: ''
     }
   },
   created() {
@@ -38,6 +44,13 @@ export default {
       .then(response => {
         this.movies = response.data.results
       })
+  },
+  computed: {
+    filteredMovies() {
+      return this.movies.filter(movie =>
+        movie.title.toLowerCase().includes(this.searchString)
+      )
+    }
   },
   methods: {
     loadMore() {
@@ -62,7 +75,7 @@ export default {
         document.documentElement.offsetHeight
       let max = document.documentElement.scrollHeight
       if (pos == max) {
-          this.loadMore()
+        this.loadMore()
       }
     }
   }
@@ -78,9 +91,12 @@ img {
   margin: 2px;
 }
 
-.list-enter-active,
-.list-leave-active {
+.list-enter-active {
   transition: all 1s;
+}
+
+.list-leave-active {
+  transition: all 0.2s;
 }
 .list-enter,
 .list-leave-to {
