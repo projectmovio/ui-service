@@ -52,7 +52,7 @@ export default {
   },
   watch: {
     searchString: function() {
-      this.expensiveOperation()
+      this.searchMovies()
     }
   },
   methods: {
@@ -84,7 +84,7 @@ export default {
         this.loadMore()
       }
     },
-    expensiveOperation: _.debounce(function() {
+    searchMovies: _.debounce(function() {
       setTimeout(
         function() {
           this.filteredMovies = this.movies.filter(movie =>
