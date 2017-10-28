@@ -26,11 +26,11 @@ import Vue from 'vue'
 import _ from 'lodash'
 
 export default {
+  name: 'start-page',
   data() {
     return {
       movies: [],
       currentPageLoaded: 1,
-      scrollOffsetBottom: 1000,
       searchString: '',
       filteredMovies: []
     }
