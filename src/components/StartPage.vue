@@ -85,13 +85,8 @@ export default {
       }
     },
     searchMovies: _.debounce(function() {
-      setTimeout(
-        function() {
-          this.filteredMovies = this.movies.filter(movie =>
-            movie.title.toLowerCase().includes(this.searchString)
-          )
-        }.bind(this),
-        200
+      this.filteredMovies = this.movies.filter(movie =>
+        movie.title.toLowerCase().includes(this.searchString)
       )
     }, 200)
   }
