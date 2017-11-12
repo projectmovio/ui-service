@@ -13,6 +13,7 @@
               <a :href="`https://www.themoviedb.org/movie/${movie.id}`">
                 <img :src="`http://image.tmdb.org/t/p/w600/${movie.poster_path}`" width="270px" height="400px" />
               </a>
+              <v-btn color="primary" @click.native="addMovie(movie.id)">Primary</v-btn>
             </span>
           </transition-group>
         </v-layout>
@@ -26,7 +27,7 @@ import Vue from 'vue'
 import _ from 'lodash'
 
 export default {
-  name: 'start-page',
+  name: 'page-start',
   data() {
     return {
       movies: [],
@@ -83,6 +84,11 @@ export default {
       if (pos == max) {
         this.loadMore()
       }
+    },
+    addMovie(movieId) {
+      Vue.axios.post(`http://localhost:5000/watch-history`, {movie_id: movieId}, {})
+        .then(response => console.log('response', response))
+        .catch(error => console.log('error', error))
     },
     searchMovies: _.debounce(function() {
       this.filteredMovies = this.movies.filter(movie =>
