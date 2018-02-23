@@ -11,7 +11,7 @@
           <transition-group name="movie" tag="p">
             <span v-for="movie in filteredMovies" v-bind:key="movie.id" class="list-movie">
               <a :href="`https://www.themoviedb.org/movie/${movie.id}`">
-                <img :src="`http://image.tmdb.org/t/p/w600/${movie.poster_path}`" width="270px" height="400px" />
+                <img :src="`http://image.tmdb.org/t/p/w200/${movie.poster_path}`" width="270px" height="400px" />
               </a>
               <v-btn color="primary" @click.native="addMovie(movie.id)">Primary</v-btn>
             </span>
