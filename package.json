@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
-    "axios": "^0.17.0",
+    "axios": "^0.19.2",
     "lodash": "^4.17.4",
     "rxjs": "^6.0.0-tactical-rc.1",
     "rxjs-compat": "^6.0.0-beta.1",
