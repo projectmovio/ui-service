@@ -10,11 +10,10 @@ getWatchHistoryByCollection("anime", createAnimeItems);
 
 function createAnimeItems(response) {
     resultHTML = ""
-    items = Object.values(response["items"])
 
     res = true;
-    for (i = 0; i < items.length; i++) {
-        itemCreated = createHistoryAnimeItem(items[i])
+    for (const [animeId, anime] of Object.entries(response["items"])) {
+        itemCreated = createHistoryAnimeItem(animeId, anime)
         res = res && itemCreated;
     }
 
@@ -25,4 +24,44 @@ function createAnimeItems(response) {
     }
 
     document.getElementById("animeWatchHistory").innerHTML = resultHTML
+}
+
+function createHistoryAnimeItem(animeId, anime) {
+    if (!("title" in anime) || !("main_picture" in anime)) {
+        return false;
+    }
+
+    title = anime["title"];
+    poster = anime["main_picture"]["medium"];
+
+    console.log(anime);
+
+    resultHTML += `<div id="poster-anime-${animeId}" class="col-4 col-md-1 poster mx-md-1 px-md-1">`
+    resultHTML += `<img class="img-fluid" src="${poster}">`
+
+    resultHTML +=`<button class="btn btn-sm btn-danger d-inline" onclick="showConfirmationModal('anime', '${animeId}', '${title}')"><i class="fas fa-minus fa-xs"></i></button>`;
+
+    resultHTML += '<p class="text-truncate small">' + title + '</p></img></div>'
+
+    return true;
+}
+
+function showConfirmationModal(collectionName, id, title) {
+    removeCollectionName = collectionName
+    removeId = id;
+
+    $('#removeModalBodyTitle').html(title);
+    $('#removalConfirmationModal').modal('show');
+}
+
+function removeFromWatchHistory() {
+    removeItem(removeCollectionName, removeId);
+
+    $('#removalConfirmationModal').modal('hide');
+    $(`#poster-${removeCollectionName}-${removeId}`).remove();
+
+    // Cleanup
+    $('#removeModalBodyTitle').html("");
+    removeCollectionName = "";
+    removeId = "";
 }
