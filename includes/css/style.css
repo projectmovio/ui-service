@@ -1,30 +1,48 @@
 .poster img {
-    height: 20vh;
+    min-height: 87%;
     object-fit: cover;
-    border-style: solid;
-    border-color: black;
 }
 
-.poster p {
-    max-width: 130px;
-    margin-top: -1.5rem;
-}
-.poster i {
-    max-width: 10px;
-    font-size: 8px;
-}
-
-.poster button {
-    padding-right: 0.3rem;
-    padding-left: 0.3rem;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: -3rem;
-    border-style: solid;
-    border-color: black;
+.item img {
+    min-height: 87%;
+    object-fit: cover;
 }
 
 body {
-    max-width: 1600px;
+    max-width: 1200px;
     margin: auto;
+}
+
+#episodesTable {
+    table-layout: fixed;
+}
+
+.episode-number-header {
+    width: 40px;
+}
+
+.episode-date-header {
+    width: 100px;
+}
+
+.episode-watched-header {
+    width: 130px;
+}
+
+.episode-add-header {
+    width: 40px;
+}
+
+#synopsisCardHeader {
+    cursor: pointer;
+}
+
+.episodeRow {
+    cursor: pointer;
+    user-select: none;
+}
+
+.navbar-logo {
+  width: 80px;
+  height: 80px;
 }

@@ -1,67 +1,59 @@
+/* global WatchHistoryApi, accessToken */
+
+const watchHistoryApi = new WatchHistoryApi();
+
 if (accessToken === null) {
-    document.getElementById("logInAlert").className = "alert alert-danger";
-}
-else {
-    document.getElementById("logInAlert").className = "d-none";
-    document.getElementById("animeWatchHistory").innerHTML = '<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>'
-}
-
-getWatchHistoryByCollection("anime", createAnimeItems);
-
-function createAnimeItems(response) {
-    resultHTML = ""
-
-    res = true;
-    for (const [animeId, anime] of Object.entries(response["items"])) {
-        itemCreated = createHistoryAnimeItem(animeId, anime)
-        res = res && itemCreated;
-    }
-
-    if (res) {
-        document.getElementById("itemsLoadingAlert").className = "d-none";
-    } else {
-        document.getElementById("itemsLoadingAlert").className = "alert alert-warning";
-    }
-
-    document.getElementById("animeWatchHistory").innerHTML = resultHTML
+  document.getElementById('logInAlert').className = 'alert alert-danger';
+} else {
+  document.getElementById('logInAlert').className = 'd-none';
+  document.getElementById('animeWatchHistory').innerHTML = '<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>';
 }
 
-function createHistoryAnimeItem(animeId, anime) {
-    if (!("title" in anime) || !("main_picture" in anime)) {
-        return false;
-    }
+watchHistoryApi.getWatchHistoryByCollection('anime').then(function (response) {
+  createAnimeItems(response.data);
+}).catch(function (error) {
+  console.log(error);
+});
 
-    title = anime["title"];
-    poster = anime["main_picture"]["medium"];
+function createAnimeItems (response) {
+  let resultHTML = '';
 
-    console.log(anime);
+  let res = true;
+  let itemCreated = false;
+  for (const [animeId, anime] of Object.entries(response.items)) {
+    const itemHTML = createHistoryAnimeItem(animeId, anime);
+    resultHTML += itemHTML;
 
-    resultHTML += `<div id="poster-anime-${animeId}" class="col-4 col-md-1 poster mx-md-1 px-md-1">`
-    resultHTML += `<img class="img-fluid" src="${poster}">`
+    itemCreated = itemHTML !== '';
 
-    resultHTML +=`<button class="btn btn-sm btn-danger d-inline" onclick="showConfirmationModal('anime', '${animeId}', '${title}')"><i class="fas fa-minus fa-xs"></i></button>`;
+    res = res && itemCreated;
+  }
 
-    resultHTML += '<p class="text-truncate small">' + title + '</p></img></div>'
+  if (res) {
+    document.getElementById('itemsLoadingAlert').className = 'd-none';
+  } else {
+    document.getElementById('itemsLoadingAlert').className = 'alert alert-warning';
+  }
 
-    return true;
+  document.getElementById('animeWatchHistory').innerHTML = resultHTML;
 }
 
-function showConfirmationModal(collectionName, id, title) {
-    removeCollectionName = collectionName
-    removeId = id;
+function createHistoryAnimeItem (animeId, anime) {
+  if (!('title' in anime) || !('main_picture' in anime)) {
+    return '';
+  }
 
-    $('#removeModalBodyTitle').html(title);
-    $('#removalConfirmationModal').modal('show');
-}
+  const title = anime.title;
+  const poster = anime.main_picture.medium;
 
-function removeFromWatchHistory() {
-    removeItem(removeCollectionName, removeId);
+  const resultHTML = `
+      <div id="poster-anime-${animeId}" class="col-4 col-md-2 poster">
+        <a href="/anime?id=${animeId}">
+          <img class="img-fluid" src="${poster}" />
+          <p class="text-truncate small">${title}</p>
+        </a>
+    </div>
+  `;
 
-    $('#removalConfirmationModal').modal('hide');
-    $(`#poster-${removeCollectionName}-${removeId}`).remove();
-
-    // Cleanup
-    $('#removeModalBodyTitle').html("");
-    removeCollectionName = "";
-    removeId = "";
+  return resultHTML;
 }

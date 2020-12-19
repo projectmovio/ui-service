@@ -1,57 +1,70 @@
-function getWatchHistory() {
-    $.ajax({
-        url: "https://api.watch-history.moshan.tv/v1/watch-history",
-        type: "get",
-        headers: {
-            'Authorization': accessToken
-        },
-        success:function(response) {
-            watchHistory = JSON.parse(response);
-        },
+/* global axios, axiosTokenInterceptor */
+/* exported WatchHistoryApi */
+class WatchHistoryApi {
+  constructor () {
+    this.apiAxios = axios.create({
+      baseURL: 'https://api.watch-history.moshan.tv/v1',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
-}
 
-function getWatchHistoryByCollection(collectionName, callback) {
-    $.ajax({
-        url: "https://api.watch-history.moshan.tv/v1/watch-history/collection/" + collectionName,
-        type: "get",
-        headers: {
-            'Authorization': accessToken
-        },
-        success:function(response) {
-            response = JSON.parse(response);
-            callback(response)
-        },
-    });
-}
+    this.apiAxios.interceptors.request.use(axiosTokenInterceptor,
+      function (error) {
+        console.log(error);
+        return Promise.reject(error);
+      });
+  }
 
-function removeItem(collection, id) {
-    $.ajax({
-        url: "https://api.watch-history.moshan.tv/v1/watch-history/collection/" + collection + '/' + id,
-        type: "delete",
-        headers: {
-            'Authorization': accessToken
-        },
-        error:function(response) {
-            console.log(response);
-        },
-    });
-}
+  getWatchHistoryByCollection (collectionName) {
+    return this.apiAxios.get(`/watch-history/collection/${collectionName}`);
+  }
 
-function addItem(collectionName, id) {
-    $.ajax({
-        url: "https://api.watch-history.moshan.tv/v1/watch-history/collection/" + collectionName,
-        type: "post",
-        contentType: 'application/json',
-        dataType: "json",
-        data: JSON.stringify({
-            item_add_id: id
-        }),
-        headers: {
-            'Authorization': accessToken
-        },
-        error:function(response) {
-            console.log(response);
-        },
-    });
+  removeWatchHistoryItem (collectionName, id) {
+    return this.apiAxios.delete(`/watch-history/collection/${collectionName}/${id}`);
+  }
+
+  addWatchHistoryItem (collectionName, id) {
+    const data = {
+      item_add_id: id,
+    };
+    return this.apiAxios.post(`/watch-history/collection/${collectionName}`, data);
+  }
+
+  getWatchHistoryItem (collectionName, id) {
+    return this.apiAxios.get(`/watch-history/collection/${collectionName}/${id}`);
+  }
+
+  addWatchHistoryEpisode (collectionName, itemId, episodeId, episodeNumber) {
+    const data = {
+      episode_id: episodeId,
+      episode_number: episodeNumber,
+    };
+    return this.apiAxios.post(`/watch-history/collection/${collectionName}/${itemId}/episode`, data);
+  }
+
+  removeWatchHistoryEpisode (collectionName, itemId, episodeId) {
+    return this.apiAxios.delete(`/watch-history/collection/${collectionName}/${itemId}/episode/${episodeId}`);
+  }
+
+  getWatchHistoryEpisode (collectionName, itemId, episodeId) {
+    const options = {
+      validateStatus: function (status) {
+        if (status >= 200 && status < 300) {
+          return true;
+        } else if (status === 404) {
+          return true;
+        }
+        return false;
+      },
+    };
+
+    return this.apiAxios.get(`/watch-history/collection/${collectionName}/${itemId}/episode/${episodeId}`, options);
+  }
+
+  updateWatchHistoryEpisode (collectionName, itemId, episodeId, watchDates = []) {
+    const data = {};
+    data.dates_watched = watchDates;
+    return this.apiAxios.patch(`/watch-history/collection/${collectionName}/${itemId}/episode/${episodeId}`, data);
+  }
 }
